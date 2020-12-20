@@ -1,0 +1,414 @@
+# Red, Red Wine by Jennifer Bradford 
+========================================================
+
+### Everything I know about red wine all in one file
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, packages}
+install.packages("ggplot2", repos = "http://cran.us.r-project.org")
+
+# load ggplot and other packages
+library(ggplot2)
+
+```
+
+```{r echo=FALSE, Load_the_Data}
+# Load the Data
+red_wine_ds <- read.csv('wineQualityReds.csv') #read csv file
+str(red_wine_ds)
+
+```
+
+### The data consists of 12 variables of components, properties, alcohol 
+### content, and quality of 1599 red wines. I will look at which properties 
+### correlate with the wine being considered a higher quality. The quality scale
+### is probably 1-10 but the data only has a range of 3-8 so we'll consider 8 
+### a best case scenario.
+
+# Univariate Plots Section
+
+### We'll look at each variable individually starting with quality distribution
+
+```{r echo=FALSE}
+summary(red_wine_ds$quality)
+ggplot(aes(x = quality), data = red_wine_ds)+
+  geom_bar(fill="#722f37", color="#cdcdcd") +
+   scale_x_continuous(breaks = seq(3, 8, 1))
+
+```
+### Now let's look at acidity, fixed then volatile
+
+```{r echo=FALSE}
+summary(red_wine_ds$fixed.acidity)
+ggplot(aes(x = fixed.acidity, color = I('white')), data = red_wine_ds)+
+  geom_histogram(bins = 25, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(4.5, 16, 1))
+
+```
+```{r echo=FALSE}
+summary(red_wine_ds$volatile.acidity)
+ggplot(aes(x = volatile.acidity, color = I('white')), data = red_wine_ds)+
+  geom_histogram(bins = 25, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 1.7, 0.1))
+
+```
+### There isn't a variable for whether it tastes good or not so let's just go 
+### look at sweetness. My guess is this one is matches up with quality, but 
+### then again, there are people who like coffee with no milk so...
+```{r echo=FALSE}
+summary(red_wine_ds$residual.sugar)
+ggplot(aes(x = residual.sugar, name="sugar"), data = red_wine_ds) +
+  geom_histogram(binwidth = 0.5, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 16, 1)) + xlab("Sugar")
+
+```
+### ok for something made of grapes, this stuff doesn't have much sugar and
+### maybe it's having less sugar that's a good thing? A few outliers here where
+### there's a ton of sugar. If I drank wine, that would be my spot
+
+### Does citric acid taste good? Who knows. OJ is good
+```{r echo=FALSE}
+summary(red_wine_ds$citric.acid)
+ggplot(aes(x = citric.acid), data = red_wine_ds) +
+  geom_histogram(binwidth = 0.07, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 1, 0.07)) + xlab("Citric Acid")
+
+```
+### There's wine with no citric acid? Is this made from GMO grapes or is there 
+### jail wine made from bread in the mix here?
+
+### Ok, on to the sulphur dioxide. I know this preservative is in soda and can  
+### cause asthma attacks. Why are there preservatives added to something that's
+### supposed to get better the longer it sits around?
+```{r echo=FALSE}
+ggplot(aes(x = free.sulfur.dioxide), data = red_wine_ds) +
+  geom_histogram(binwidth = 5, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0,80,5)) + xlab("Free Sulphur Dioxide")
+
+```
+
+```{r echo=FALSE}
+ggplot(aes(x = total.sulfur.dioxide), data = red_wine_ds) +
+  geom_histogram(binwidth = 10, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0,170,10), limits= c(5, 170)) + 
+  xlab("Total Sulphur Dioxide")
+
+```
+
+### I hope less preservatives is better. We'll see.
+
+### Chlorides. Ok now we have salt, acid, and sugar. Now I understand the cheese 
+
+```{r echo=FALSE}
+ggplot(aes(x = chlorides), data = red_wine_ds) +
+  geom_histogram(binwidth = 0.03, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 1, 0.03)) + xlab("Chlorides")
+
+```
+### this histogram has some wild outliers so I'm cutting off the tail
+
+```{r echo=FALSE}
+ggplot(aes(x = chlorides), data = red_wine_ds) +
+  geom_histogram(binwidth = 0.01, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 1, 0.01), limits= c(0.03, 0.15)) + xlab("Chlorides")
+
+```
+
+### That looks like something easier to get some meaning from.
+
+### I've heard about pH being a thing with wine but I don't know what's supposed
+### to be good. I'm guessing it's supposed to be acidic like other fruit based
+### drinks. I do know that 7 is neutral and lower than that for more acidic. 
+### Rough scale to see what's there:
+
+```{r echo=FALSE}
+ggplot(aes(x = pH), data = red_wine_ds) +
+  geom_histogram(bins = 20, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 7, .25)) + xlab("pH")
+
+```
+
+### Looks ok without tails chopped off. This stuff is way more acidic than
+### coffee so I don't want to ever hear from wine drinking dentists ever again.
+
+### On to the sulphates. I don't even like sulphates in my shampoo. In all 
+### fairness, I've never seen even the wildest lifehack videos on youtube 
+### recommending washing your hair with wine. Is this TMI yet? Will the team
+### at Udacity start calling not-it when I turn things in? The rubric asks for
+### a stream of consciousness though so here we are.
+
+```{r echo=FALSE}
+ggplot(aes(x = sulphates), data = red_wine_ds) +
+  geom_histogram(bins = 20, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0.25, 1.5, 0.5), limits= c(0.25, 1.5)) + 
+  xlab("Sulphates")
+
+```
+
+### Google says the sulphates are from pesticides. Yuck.
+
+### On to the thing wine drinkers drink wine for, alcohol. I'm guessing it's not
+### vodka levels but let's see what it looks like with no limits
+
+```{r echo=FALSE}
+ggplot(aes(x = alcohol), data = red_wine_ds) +
+  geom_histogram(bins = 20, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 20, 1)) + xlab("Alcohol")
+
+```
+
+### I don't know if that is a measure of proof, percent, or volume. Not that I 
+### could really explain the difference between proof and percent anyway, but 
+### it seems to be halfway between advertised alcohol levels for beer and 
+### whiskey.
+
+
+
+# Univariate Analysis
+
+
+### What is the structure of your dataset?
+
+- There are 1599 wines in the dataset and 12 variables of them are measured
+
+### What is/are the main feature(s) of interest in your dataset?
+
+- My main goal is to see which what combination of salt, acid, and sugar make 
+a wine good
+
+### What other features in the dataset do you think will help support your \
+### investigation into your feature(s) of interest?
+
+- I'm pretty sure sulphates are going to have a negative effect.
+
+### Did you create any new variables from existing variables in the dataset?
+
+- I didn't make up any variables.
+
+### Of the features you investigated, were there any unusual distributions? \
+Did you perform any operations on the data to tidy, adjust, or change the form \
+of the data? If so, why did you do this?
+
+- I chose a tidy data set because I'm out of time for the semester and already 
+did the data cleaning project. I did chop the tails off some skewed data to get
+a better look at some of the variables.
+
+
+# Bivariate Plots Section
+
+
+## Bivariate Analysis
+
+### Here I'm going to look for some correlations between quality and things I'm 
+### guessing make it taste better because they're usually what makes anything
+### taste good. So we're looking at salt, sugar, and acid with the possibility 
+### of sulphates messing up a good wine.
+
+```{r echo=FALSE, warning=F, Bivariate_Plots}
+#bivariate analysis of quality vs citric acid
+ggplot( aes(x = as.factor(quality), y = red_wine_ds$citric.acid),
+  data = red_wine_ds) +
+  geom_boxplot(fill="#722f37", color="#000000") +
+  scale_x_discrete(breaks = seq(3, 8, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.1)) +
+  xlab("Quality") + ylab("Acidity")
+
+```
+
+### Acid looks like a winner.
+
+### Let's look at sugar.
+
+```{r echo=FALSE, warning=F}
+#bivariate analysis of quality vs sugar
+ggplot( aes(x = as.factor(quality), y = red_wine_ds$residual.sugar),
+  data = red_wine_ds) +
+  geom_boxplot(fill="#722f37", color="#000000") +
+  scale_x_discrete(breaks = seq(3, 8, 1)) +
+  scale_y_continuous(breaks = seq(0, 16, 1)) +
+  xlab("Quality") + ylab("Sugar")
+
+```
+
+### That's not what I expected. Pretty flat across the board here. Maybe there's
+### only so much sugar grapes can have and that's that? Now I'm curious if 
+### anyone has made wine from moon drop grapes.
+
+
+### Ok how about salt?
+
+```{r echo=FALSE, warning=F}
+#bivariate analysis of quality vs chlorides
+ggplot( aes(x = as.factor(quality), y = red_wine_ds$chlorides),
+  data = red_wine_ds) +
+  geom_boxplot(fill="#722f37", color="#000000") +
+  scale_x_discrete(breaks = seq(3, 8, 1)) +
+  scale_y_continuous(breaks = seq(0, 1, 0.01), limits= c(0.03, 0.15)) +
+  xlab("Quality") + ylab("Salt")
+
+
+```
+### Less salt looks better. That's the opposite of what I expected. At least 
+### there's a pattern though.
+
+
+### Finally here's sulphates. I want to see how pesticides affect quality.
+
+```{r echo=FALSE, warning=F}
+#bivariate analysis of quality vs sulphates
+ggplot( aes(x = as.factor(quality), y = red_wine_ds$sulphates),
+  data = red_wine_ds) +
+  geom_boxplot(fill="#722f37", color="#000000") +
+  scale_x_discrete(breaks = seq(3, 8, 1)) +
+  scale_y_continuous(breaks = seq(0.35, 1.25, 0.5), limits= c(0.35, 1.25)) +
+  xlab("Quality") + ylab("Pesticides")
+
+
+```
+
+### More pesticides is good? Oh well. Melted styrofoam tastes good too as
+### evidenced by dunkin donuts coffee.
+
+
+### Is more alcohol good or bad? I don't know but I'm curious.
+
+```{r echo=FALSE, warning=F}
+#bivariate analysis of quality vs alcohol
+ggplot( aes(x = as.factor(quality), y = red_wine_ds$alcohol),
+  data = red_wine_ds) +
+  geom_boxplot(fill="#722f37", color="#000000") +
+  scale_x_discrete(breaks = seq(3, 8, 1)) +
+  scale_y_continuous(breaks = seq(0, 20, 1)) +
+  xlab("Quality") + ylab("Alcohol")
+
+```
+
+### This one looks like a pretty clear correlation.
+
+
+
+
+### How did the feature(s) of interest vary with other features in the dataset?
+
+- It appears less salt, more acid, and more alcohol all correlate to quality.
+
+### Did you observe any interesting relationships between the other features \
+(not the main feature(s) of interest)?
+
+- I really expected pesticides to have a negative effect but they didn't.
+
+### What was the strongest relationship you found?
+
+- Alcohol content is the strongest relationship by far.
+
+
+
+
+# Multivariate Plots Section
+
+> **Tip**: Now it's time to put everything together. Based on what you found in
+the bivariate plots section, create a few multivariate plots to investigate
+more complex interactions between variables. Make sure that the plots that you
+create here are justified by the plots you explored in the previous section. If
+you plan on creating any mathematical models, this is the section where you
+will do that.
+
+```{r echo=FALSE, Multivariate_Plots}
+ggplot( aes(y=alcohol,x=quality,color = citric.acid), data = red_wine_ds) +
+  geom_jitter(alpha=1/2,size=3)+
+  xlab("Quality") + ylab("Amount of Alcohol") +
+  scale_colour_gradient2(low="yellow", high="red",mid="orange",midpoint = 0.5)+
+  ggtitle("Alcohol vs. Quality of wine by Acidity")
+
+```
+
+```{r echo=FALSE}
+ggplot( aes(y=alcohol,x=quality,color = sulphates), data = red_wine_ds) +
+  geom_jitter(alpha=1/2,size=3)+
+  xlab("Quality") + ylab("Amount of Alcohol") +
+  scale_colour_gradient2(low="blue", high="red",mid="yellow",midpoint = 1) +
+  ggtitle("Alcohol vs. Quality of wine by Sulphates")
+
+```
+
+
+# Multivariate Analysis
+
+### Talk about some of the relationships you observed in this part of the \
+investigation. Were there features that strengthened each other in terms of \
+looking at your feature(s) of interest?
+
+- Pesticides and citric acid appear to be helpers to the amount of alcohol that
+makes up a quality wine.
+
+### Were there any interesting or surprising interactions between features?
+
+- I really thought sulphates from pesticides would have the opposite effect.
+
+
+
+------
+
+# Final Plots and Summary
+
+
+### Plot One
+```{r echo=FALSE, Plot_One}
+ggplot(aes(x = pH), data = red_wine_ds) +
+  geom_histogram(bins = 20, fill="#722f37", color="#cdcdcd") +
+  scale_x_continuous(breaks = seq(0, 7, .25)) + xlab("pH")
+
+```
+
+### I chose the pH histogram because I was really surprised to find that most 
+### wine is between 3.2 and 3.5 pH. Compared to coffee's average of around 5, 
+### that's very acidic. The popularity of alkaline water and wine right now 
+### among hipsters is a strange contrast. 
+
+
+
+### Plot Two
+```{r echo=FALSE, Plot_Two}
+ggplot( aes(y=alcohol,x=quality,color = sulphates), data = red_wine_ds) +
+  geom_jitter(alpha=1/2,size=3)+
+  xlab("Quality") + ylab("Amount of Alcohol") +
+  scale_colour_gradient2(low="blue", high="red",mid="yellow",midpoint = 1) +
+  ggtitle("Alcohol vs. Quality of wine by Sulphates")
+
+
+```
+
+### Plot 2 is another one that surprised me. Sulphates in wine are a result of 
+### pesticides being sprayed on grapes. I get that grapes are a fragile fruit
+### and pesticides keep whole crops from being destroyed, but I really didn't 
+### expect their presence to enhance quality. 
+
+
+### Plot Three
+```{r echo=FALSE, Plot_Three}
+ggplot( aes(x = as.factor(quality), y = residual.sugar),
+  data = red_wine_ds) +
+  geom_boxplot(fill="#722f37", color="#000000") +
+  scale_x_discrete(breaks = seq(3, 8, 1)) +
+  scale_y_continuous(breaks = seq(0, 4, 0.5), limits = c(1, 3.5)) +
+  xlab("Quality") + ylab("Sugar")
+
+
+```
+
+### Plot 3 was chosen because I really expected more sugar to correlate to a 
+### wine being higher quality since what makes grapes tasty is thier sweetness.
+### I was surprised to see a basically flat line when compared to quality. Even
+### after zooming in on the box plots by cutting off some outliers, the drop off
+### in sugar for the highest quality wines ruins the positive correlation.
+
+------
+
+# Reflection
+
+Wine has been credited for various healthy properties like being high in 
+resveratrol and other antioxidants. Considering the acidity though, it'll likely
+wreck your teeth. My cooking experience had me expecting salt, sweet, and acid 
+to be what makes it taste good. I'm not convinced by these results that Quality
+is related it tasting good since higher sulphates correlated with quality. Also,
+salt usually makes things taste better even when their supposed to be sweet, but
+here we find that salt had a negative correlation with quality. 
