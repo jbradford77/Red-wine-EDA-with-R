@@ -35,6 +35,8 @@ ggplot(aes(x = quality), data = red_wine_ds)+
    scale_x_continuous(breaks = seq(3, 8, 1))
 
 ```
+
+
 ### Now let's look at acidity, fixed then volatile
 
 ```{r echo=FALSE}
@@ -51,9 +53,12 @@ ggplot(aes(x = volatile.acidity, color = I('white')), data = red_wine_ds)+
   scale_x_continuous(breaks = seq(0, 1.7, 0.1))
 
 ```
+
+
 ### There isn't a variable for whether it tastes good or not so let's just go 
 ### look at sweetness. My guess is this one is matches up with quality, but 
 ### then again, there are people who like coffee with no milk so...
+
 ```{r echo=FALSE}
 summary(red_wine_ds$residual.sugar)
 ggplot(aes(x = residual.sugar, name="sugar"), data = red_wine_ds) +
@@ -61,11 +66,14 @@ ggplot(aes(x = residual.sugar, name="sugar"), data = red_wine_ds) +
   scale_x_continuous(breaks = seq(0, 16, 1)) + xlab("Sugar")
 
 ```
+
+
 ### ok for something made of grapes, this stuff doesn't have much sugar and
 ### maybe it's having less sugar that's a good thing? A few outliers here where
 ### there's a ton of sugar. If I drank wine, that would be my spot
 
 ### Does citric acid taste good? Who knows. OJ is good
+
 ```{r echo=FALSE}
 summary(red_wine_ds$citric.acid)
 ggplot(aes(x = citric.acid), data = red_wine_ds) +
@@ -73,12 +81,14 @@ ggplot(aes(x = citric.acid), data = red_wine_ds) +
   scale_x_continuous(breaks = seq(0, 1, 0.07)) + xlab("Citric Acid")
 
 ```
+
 ### There's wine with no citric acid? Is this made from GMO grapes or is there 
 ### jail wine made from bread in the mix here?
 
 ### Ok, on to the sulphur dioxide. I know this preservative is in soda and can  
 ### cause asthma attacks. Why are there preservatives added to something that's
 ### supposed to get better the longer it sits around?
+
 ```{r echo=FALSE}
 ggplot(aes(x = free.sulfur.dioxide), data = red_wine_ds) +
   geom_histogram(binwidth = 5, fill="#722f37", color="#cdcdcd") +
@@ -96,7 +106,9 @@ ggplot(aes(x = total.sulfur.dioxide), data = red_wine_ds) +
 
 ### I hope less preservatives is better. We'll see.
 
-### Chlorides. Ok now we have salt, acid, and sugar. Now I understand the cheese 
+### Chlorides. Ok now we have salt, acid, and sugar. Now I understand cheese 
+### being frequently paired with wine since fat is a nice way to round out salt,
+### sugar, and acid
 
 ```{r echo=FALSE}
 ggplot(aes(x = chlorides), data = red_wine_ds) +
@@ -104,6 +116,7 @@ ggplot(aes(x = chlorides), data = red_wine_ds) +
   scale_x_continuous(breaks = seq(0, 1, 0.03)) + xlab("Chlorides")
 
 ```
+
 ### this histogram has some wild outliers so I'm cutting off the tail
 
 ```{r echo=FALSE}
@@ -112,6 +125,7 @@ ggplot(aes(x = chlorides), data = red_wine_ds) +
   scale_x_continuous(breaks = seq(0, 1, 0.01), limits= c(0.03, 0.15)) + xlab("Chlorides")
 
 ```
+
 
 ### That looks like something easier to get some meaning from.
 
@@ -247,6 +261,8 @@ ggplot( aes(x = as.factor(quality), y = red_wine_ds$chlorides),
 
 
 ```
+
+
 ### Less salt looks better. That's the opposite of what I expected. At least 
 ### there's a pattern though.
 
@@ -352,6 +368,7 @@ makes up a quality wine.
 
 
 ### Plot One
+
 ```{r echo=FALSE, Plot_One}
 ggplot(aes(x = pH), data = red_wine_ds) +
   geom_histogram(bins = 20, fill="#722f37", color="#cdcdcd") +
@@ -367,6 +384,7 @@ ggplot(aes(x = pH), data = red_wine_ds) +
 
 
 ### Plot Two
+
 ```{r echo=FALSE, Plot_Two}
 ggplot( aes(y=alcohol,x=quality,color = sulphates), data = red_wine_ds) +
   geom_jitter(alpha=1/2,size=3)+
@@ -384,6 +402,7 @@ ggplot( aes(y=alcohol,x=quality,color = sulphates), data = red_wine_ds) +
 
 
 ### Plot Three
+
 ```{r echo=FALSE, Plot_Three}
 ggplot( aes(x = as.factor(quality), y = residual.sugar),
   data = red_wine_ds) +
